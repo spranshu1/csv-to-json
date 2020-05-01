@@ -17,23 +17,43 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.util.StringUtils;
 
+/**
+ * The type Csv to json application.
+ */
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.github.spranshu1.csvtojson"})
 public class CsvToJsonApplication implements CommandLineRunner {
 
 	private static final Logger log  = LoggerFactory.getLogger(CsvToJsonApplication.class);
 
+	/**
+	 * The constant source.
+	 */
 	public static String source;
 
+	/**
+	 * The constant destination.
+	 */
 	public static String destination;
 
+	/**
+	 * The constant sheetName.
+	 */
 	public static String sheetName;
 
+	/**
+	 * The constant sheetIndex.
+	 */
 	public static Integer sheetIndex;
 
 	@Autowired
 	private FileServiceFactory fileServiceFactory;
 
+	/**
+	 * The entry point of application.
+	 *
+	 * @param args the input arguments
+	 */
 	public static void main(String[] args) {
 
 		ConfigurableApplicationContext configurableAppContext = null;
@@ -60,8 +80,12 @@ public class CsvToJsonApplication implements CommandLineRunner {
 
         if(fileService.fileExist(source)){
 
-        	final JsonNode jsonData = fileService.convertToJson(source);
-			System.out.println(jsonData.toString());
+        	final JsonNode jsonData = fileService.convert(source);
+			log.info("{}",jsonData.toString());
+			//TODO: create json file at destination
+
+			exit(0);
+
         }
 
 	}
@@ -90,6 +114,11 @@ public class CsvToJsonApplication implements CommandLineRunner {
 		}
 	}
 
+	/**
+	 * Exit.
+	 *
+	 * @param status the status
+	 */
 	public static void exit(int status){
 		log.info(Messages.SYS_EXIT);
 		System.exit(status);

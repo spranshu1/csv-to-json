@@ -6,12 +6,34 @@ import com.github.spranshu1.csvtojson.exceptions.InvalidFileException;
 
 import java.io.IOException;
 
+/**
+ * The interface File service.
+ */
 public interface FileService {
 
+    /**
+     * File exist boolean.
+     *
+     * @param srcFilePath the src file path
+     * @return the boolean
+     * @throws InvalidFileException the invalid file exception
+     */
     boolean fileExist(final String srcFilePath) throws InvalidFileException;
 
-    JsonNode convertToJson(final String srcFilePath) throws IOException;
+    /**
+     * Convert to json node.
+     *
+     * @param srcFilePath the src file path
+     * @return the json node
+     * @throws IOException the io exception
+     */
+    JsonNode convert(final String srcFilePath) throws IOException;
 
+    /**
+     * Store at destination.
+     *
+     * @param destFilePath the dest file path
+     */
     void storeAtDestination(final String destFilePath);
 
 }

@@ -20,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+/**
+ * The type Excel file service.
+ */
 @Service
 public class ExcelFileService implements FileService {
 
@@ -52,49 +55,39 @@ public class ExcelFileService implements FileService {
     }
 
     @Override
-    public JsonNode convertToJson(String srcFilePath) throws IOException {
+    public JsonNode convert(final String srcFilePath) throws IOException {
         if (StringUtils.isEmpty(CsvToJsonApplication.sheetName) && CsvToJsonApplication.sheetIndex < 0) {
             throw new IOException(Messages.ERR_XLS_SHEET);
         }
-        FileInputStream excelFile = new FileInputStream(new File(srcFilePath));
-        Workbook workbook = new XSSFWorkbook(excelFile);
+        final FileInputStream excelFile = new FileInputStream(new File(srcFilePath));
+        final Workbook workbook = new XSSFWorkbook(excelFile);
 
-        Sheet dataSheet = StringUtils.isEmpty(CsvToJsonApplication.sheetName)
+        final Sheet dataSheet = StringUtils.isEmpty(CsvToJsonApplication.sheetName)
                 ? workbook.getSheetAt(CsvToJsonApplication.sheetIndex) : workbook.getSheet(CsvToJsonApplication.sheetName);
 
-        Row headerRow = dataSheet.getRow(0);
+        final Row headerRow = dataSheet.getRow(0);
 
-        Iterator<Row> iterator = dataSheet.iterator();
+        final Iterator<Row> iterator = dataSheet.iterator();
         iterator.next(); // to skip header row
-        ObjectNode parent = JSONHandler.getObjectMapper().createObjectNode();
+        ObjectNode parent = JSONHandler.createNode();
         while (iterator.hasNext()) {
 
             Row currentRow = iterator.next();
 
-            Iterator<Cell> cellIterator = currentRow.iterator();
+            for (Cell currentCell : currentRow) {
 
-            while (cellIterator.hasNext()) {
-
-                Cell currentCell = cellIterator.next();
-
+                String field = headerRow.getCell(currentCell.getColumnIndex()).getStringCellValue();
+                ObjectNode node = JSONHandler.createNode();
                 if (currentCell.getCellType() == CellType.STRING) {
-                    String field = headerRow.getCell(currentCell.getColumnIndex()).getStringCellValue();
                     String value = currentCell.getStringCellValue();
-                    log.info("field:{} , value:{}",field,value);
-                    ObjectNode node = JSONHandler.getObjectMapper().createObjectNode();
-                    node.put(field,value);
-                    parent = JSONHandler.mergeJsons(parent,node);
+                    node.put(field, value);
                 } else if (currentCell.getCellType() == CellType.NUMERIC) {
-                    String field = headerRow.getCell(currentCell.getColumnIndex()).getStringCellValue();
                     double value = currentCell.getNumericCellValue();
-                    log.info("field:{} , value:{}",field,value);
-                    ObjectNode node = JSONHandler.getObjectMapper().createObjectNode();
-                    node.put(field,value);
-                    parent = JSONHandler.mergeJsons(parent,node);
+                    node.put(field, value);
                 }
+                parent = JSONHandler.mergeJsons(parent, node);
 
             }
-            System.out.println();
         }
 
         return parent;

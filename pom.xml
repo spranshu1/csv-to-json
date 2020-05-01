@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>com.github.spranshu1.common.util</groupId>
 			<artifactId>common-utils</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<version>1.0.3</version>
 		</dependency>
 
 		<!--<dependency>
