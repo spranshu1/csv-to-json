@@ -1,4 +1,4 @@
-## csv-to-json
+# csv-to-json
 
 Simple CSV to JSON converter 
 
