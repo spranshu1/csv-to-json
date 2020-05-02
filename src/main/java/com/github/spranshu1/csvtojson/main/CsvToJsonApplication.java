@@ -1,12 +1,12 @@
 package com.github.spranshu1.csvtojson.main;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.spranshu1.common.util.file.FileUtil;
+import com.github.spranshu1.common.util.string.StringUtil;
 import com.github.spranshu1.csvtojson.constants.Messages;
 import com.github.spranshu1.csvtojson.exceptions.InvalidArgumentException;
 import com.github.spranshu1.csvtojson.services.FileService;
 import com.github.spranshu1.csvtojson.services.FileServiceFactory;
-import com.github.spranshu1.csvtojson.util.CommonUtil;
-import com.github.spranshu1.csvtojson.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.util.StringUtils;
 
 /**
  * The type Csv to json application.
@@ -76,13 +75,16 @@ public class CsvToJsonApplication implements CommandLineRunner {
 
         String ext = FileUtil.getFileExtension(FileUtil.getFileName(source));
 
-        FileService fileService = fileServiceFactory.getService(ext,sheetName,sheetIndex);
+        FileService fileService = fileServiceFactory.getService(ext);
 
         if(fileService.fileExist(source)){
 
         	final JsonNode jsonData = fileService.convert(source);
-			log.info("{}",jsonData.toString());
-			//TODO: create json file at destination
+			log.info("Json Data Generated : {}",jsonData.toString());
+
+			fileService.storeAtDestination(destination,jsonData.toString());
+
+			log.info("Json file created successfully at destination");
 
 			exit(0);
 
@@ -97,18 +99,18 @@ public class CsvToJsonApplication implements CommandLineRunner {
 		}
 
 		if(totalArgs > 2){
-			source = StringUtils.isEmpty(args[0]) ? null : args[0].trim();
-			destination = StringUtils.isEmpty(args[1]) ? null : args[1].trim();
-			if(CommonUtil.isNumeric(args[2])) {
+			source = StringUtil.strFieldIsEmpty(args[0]) ? null : args[0].trim();
+			destination = StringUtil.strFieldIsEmpty(args[1]) ? null : args[1].trim();
+			if(StringUtil.isNumeric(args[2])) {
 				sheetIndex = Integer.parseInt(args[2]);
 				sheetName = null;
 			}else{
-				sheetName = StringUtils.isEmpty(args[2]) ? null : args[2].trim();
+				sheetName = StringUtil.strFieldIsEmpty(args[2]) ? null : args[2].trim();
 				sheetIndex = null;
 			}
 		} else {
-			source = StringUtils.isEmpty(args[0]) ? null : args[0].trim();
-			destination = StringUtils.isEmpty(args[1]) ? null : args[1].trim();
+			source = StringUtil.strFieldIsEmpty(args[0]) ? null : args[0].trim();
+			destination = StringUtil.strFieldIsEmpty(args[1]) ? null : args[1].trim();
 			sheetIndex = 0;
 			sheetName = null;
 		}

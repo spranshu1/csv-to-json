@@ -2,12 +2,12 @@ package com.github.spranshu1.csvtojson.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.spranshu1.common.util.file.FileUtil;
 import com.github.spranshu1.common.util.json.JSONHandler;
 import com.github.spranshu1.csvtojson.constants.AppConstants;
 import com.github.spranshu1.csvtojson.constants.Messages;
 import com.github.spranshu1.csvtojson.exceptions.InvalidFileException;
 import com.github.spranshu1.csvtojson.main.CsvToJsonApplication;
-import com.github.spranshu1.csvtojson.util.FileUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -94,7 +95,15 @@ public class ExcelFileService implements FileService {
     }
 
     @Override
-    public void storeAtDestination(String destFilePath) {
+    public void storeAtDestination(String destFilePath,String data) throws IOException {
+
+        FileWriter fileWriter = new FileWriter(destFilePath);
+
+        fileWriter.write(data);
+
+        fileWriter.flush();
+
+        fileWriter.close();
 
     }
 }

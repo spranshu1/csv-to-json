@@ -33,7 +33,9 @@ public interface FileService {
      * Store at destination.
      *
      * @param destFilePath the dest file path
+     * @param data         the data
+     * @throws IOException the io exception
      */
-    void storeAtDestination(final String destFilePath);
+    void storeAtDestination(final String destFilePath, final String data) throws IOException;
 
 }

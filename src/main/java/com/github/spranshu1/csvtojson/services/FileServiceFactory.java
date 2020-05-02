@@ -11,7 +11,7 @@ public class FileServiceFactory {
     @Autowired
     private ExcelFileService excelFileService;
 
-    public FileService getService(String service, String sheet, Integer sheetIndex) {
+    public FileService getService(String service) {
         service = StringUtils.isEmpty(service) ? "" : service.toLowerCase();
 
         switch (service){
@@ -24,9 +24,5 @@ public class FileServiceFactory {
                 return null;
         }
 
-    }
-
-    public FileService getService(String service){
-        return getService(service,null,null);
     }
 }
